@@ -6,8 +6,8 @@
 </header>
 
 <body id="background" >
-  <form class="flex gap-2 mr-36 ml-36 mt-36" method="POST">
-    <Search on:click size="md" />
+  <form method="POST" class="flex gap-2 mr-36 ml-36 mt-36" on:submit|preventDefault={handleSubmit}>
+    <input name="link" id="link" type="text">
     <Button type="submit" class="!p-2.5 bg-primary-400">
       <SearchOutline class="w-5 h-5" />
     </Button>
@@ -16,12 +16,13 @@
 
 <a href="/process">Process</a>
 
-<script>
+<script lang="ts">
   import { Search, Button } from 'flowbite-svelte';
   import { SearchOutline } from 'flowbite-svelte-icons';
   import { Heading, P, A, Mark, Secondary } from 'flowbite-svelte';
   import { Popover} from 'flowbite-svelte';
   import { blur, fade, slide } from 'svelte/transition';
+  import { handleSubmit } from './functions';
 </script>
 
 
@@ -30,4 +31,3 @@
     background-color : #1A1A1D;
   }
 </style>
-
