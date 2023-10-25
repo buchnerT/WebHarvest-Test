@@ -5,7 +5,7 @@ export async function POST({request}) {
    
     try {
 
-        const formData = request.body || {};
+        const formData = JSON.parse(request.body) || {};
         console.log("form:" + formData);
         let test = JSON.stringify(formData, null, 2)
         console.log(test);
