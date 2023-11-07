@@ -30,13 +30,7 @@ export async function POST({ request }: { request: Request }) {
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
     }
 
-    return {
-      status: 200,
-      body: { message: 'Data submitted successfully' },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+    
   } catch (error) {
     console.error(error);
     return {

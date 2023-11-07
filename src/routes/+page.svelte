@@ -7,14 +7,13 @@
 
 <body id="background" >
   <form method="POST" class="flex gap-2 mr-36 ml-36 mt-36" on:submit|preventDefault={handleSubmit}>
-    <input name="link" id="link" type="text">
-    <Button type="submit" class="!p-2.5 bg-primary-400">
+    <Search name="link" id="link" type="text"></Search>
+    <Button href="/process" type="submit" class="!p-2.5 bg-primary-400">
       <SearchOutline class="w-5 h-5" />
     </Button>
   </form>
 </body>
 
-<a href="/process">Process</a>
 
 <script lang="ts">
   import { Search, Button } from 'flowbite-svelte';
@@ -22,28 +21,7 @@
   import { Heading, P, A, Mark, Secondary } from 'flowbite-svelte';
   import { Popover} from 'flowbite-svelte';
   import { blur, fade, slide } from 'svelte/transition';
-
-  async function handleSubmit(event: Event) {
-  event.preventDefault();
-  const form = document.querySelector('form');
-
-  if (form) {
-    const formData = new FormData(form);
-    const linkValue = formData.get('link');
-    console.log(linkValue);
-
-    const response = await fetch('/api/submitData', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-     body: JSON.stringify({ link: linkValue })
-  });
-
-    const data = await response.json();
-    console.log(data);
-  }
-}
+  import { handleSubmit } from '$lib/functions';
 </script>
 
 
