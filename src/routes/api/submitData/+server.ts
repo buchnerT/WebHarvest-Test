@@ -28,6 +28,14 @@ export async function POST({ request }: { request: Request }) {
       const filePath = path.join(dataFolder, filename);
 
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
+
+      return{
+        status: 200,
+        body: { message: 'Data transmitted successfully'},
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
     }
 
     

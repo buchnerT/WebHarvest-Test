@@ -8,11 +8,11 @@
 <body id="background" >
   <form method="POST" class="flex gap-2 mr-36 ml-36 mt-36" on:submit|preventDefault={handleSubmit}>
     <Search name="link" id="link" type="text"></Search>
-    <Button href="/process" type="submit" class="!p-2.5 bg-primary-400">
+    <Button type="submit" class="!p-2.5 bg-primary-400">
       <SearchOutline class="w-5 h-5" />
     </Button>
   </form>
-</body>
+</body> 
 
 
 <script lang="ts">
