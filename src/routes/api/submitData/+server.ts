@@ -22,7 +22,12 @@ export async function POST({ request }: { request: Request }) {
       }
       modulePath = decodeURIComponent(modulePath);
 
+      // Set path's
       const dataFolder = path.join(path.dirname(modulePath), '../../../json/files');
+      const pythonScriptPath = path.join(path.dirname(modulePath), '../../../scripts/main.py');
+
+      clearDirectory(dataFolder);
+
 
       await fs.mkdir(dataFolder, { recursive: true });
 
@@ -30,7 +35,6 @@ export async function POST({ request }: { request: Request }) {
 
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
 
-      const pythonScriptPath = path.join(path.dirname(modulePath), '../../../scripts/main.py');
 
       exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
         if (error) {
@@ -59,6 +63,25 @@ export async function POST({ request }: { request: Request }) {
         'Content-Type': 'application/json',
       },
     };
+  }
+}
+
+async function clearDirectory(directory: string): Promise<void> {
+  try {
+
+    const entries = await fs.readdir(directory, { withFileTypes: true });
+
+    const deletionPromises = entries.map((dirent) => {
+      const entryPath = path.join(directory, dirent.name);
+      return dirent.isFile() ? fs.unlink(entryPath) : Promise.resolve();
+  
+    });
+
+    await Promise.all(deletionPromises);
+
+    console.log('All files have been deleted.');
+  } catch (error) {
+    console.error('Error clearing directory:', error);
   }
 }
 
