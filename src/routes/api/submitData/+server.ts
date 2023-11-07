@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises';
 import path from 'path';
+import { exec } from 'child_process'
 
 export async function POST({ request }: { request: Request }) {
   try {
@@ -18,8 +19,8 @@ export async function POST({ request }: { request: Request }) {
 
       if (process.platform === 'win32') {
         modulePath = modulePath.replace(/^\/(?=[A-Z]:)/, '');
-        modulePath = decodeURIComponent(modulePath);
       }
+      modulePath = decodeURIComponent(modulePath);
 
       const dataFolder = path.join(path.dirname(modulePath), '../../../json/files');
 
@@ -29,16 +30,26 @@ export async function POST({ request }: { request: Request }) {
 
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
 
-      return{
+      const pythonScriptPath = path.join(path.dirname(modulePath), '../../../scripts/main.py');
+
+      exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      });
+
+      return new Response(JSON.stringify({ message: 'Data transmitted successfully' }), {
         status: 200,
-        body: { message: 'Data transmitted successfully'},
         headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+          'Content-Type': 'application/json'
+        }
+      });
     }
 
-    
   } catch (error) {
     console.error(error);
     return {
