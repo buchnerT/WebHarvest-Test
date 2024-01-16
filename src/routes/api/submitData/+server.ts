@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises';
 import path from 'path';
+import { streamToString } from '$lib/server/stringConverter';
 import { exec } from 'child_process'
 
 export async function POST({ request }: { request: Request }) {
@@ -46,6 +47,7 @@ export async function POST({ request }: { request: Request }) {
         console.error(`stderr: ${stderr}`);
       });
 
+
       return new Response(JSON.stringify({ message: 'Data transmitted successfully' }), {
         status: 200,
         headers: {
@@ -66,6 +68,7 @@ export async function POST({ request }: { request: Request }) {
   }
 }
 
+
 async function clearDirectory(directory: string): Promise<void> {
   try {
 
@@ -85,13 +88,3 @@ async function clearDirectory(directory: string): Promise<void> {
   }
 }
 
-async function streamToString(stream: ReadableStream<Uint8Array>): Promise<string> {
-  const reader = stream.getReader();
-  let result = '';
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    result += new TextDecoder().decode(value);
-  }
-  return result;
-}
