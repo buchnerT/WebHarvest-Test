@@ -23,33 +23,75 @@
   import { blur, fade, slide } from 'svelte/transition';
   import { writable } from 'svelte/store';
 
-  // Indicator for the Loading Bar
-  let loadingProgress = writable(0); 
-  let isLoading = false;
+  let progress = writable(0); // Tracks the progress of the task
+  let isLoading = writable(false); // Tracks whether a task is in progress
+  let taskId : any; // Will store the task ID returned from the backend
 
-  // Function to Handle the URL Submit
+  // Function to handle the URL submit
   async function handleSubmit(event: Event) {
-  let isLoading = true;
-  event.preventDefault();
-  const form = document.querySelector('form');
+    event.preventDefault();
+    isLoading.set(true);
+    progress.set(1); // Indicates form submission
 
-  if (form) {
-    const formData = new FormData(form);
-    const linkValue = formData.get('link');
-    console.log(linkValue);
+    const form = document.querySelector('form');
+    if (form) {
+      const formData = new FormData(form);
+      const linkValue = formData.get('link');
 
-    const response = await fetch('/api/submitData', {
-        method: 'POST',
-        headers: {
+      try {
+        const response = await fetch('/api/submitData', {
+          method: 'POST',
+          headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ link: linkValue })
-    });
+          },
+          body: JSON.stringify({ link: linkValue })
+        });
 
-    const data = await response.json();
-    console.log(data);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        taskId = data.taskId; 
+
+        pollTaskStatus(); 
+      } catch (error) {
+        console.error('Fetch error:', error);
+        isLoading.set(false);
+      }
+    }
   }
-}
+
+  function pollTaskStatus() {
+    const interval = setInterval(async () => {
+      try {
+        const statusResponse = await fetch(`/api/taskStatus/${taskId}`);
+        if (!statusResponse.ok) {
+          throw new Error('Status check failed');
+        }
+
+        const { status } = await statusResponse.json();
+
+        if (status === 'scrapingCompleted') {
+          progress.set(2);
+          console.log("set 2");
+        } else if (status === 'ratingCompleted') {
+          progress.set(3);
+          console.log("set 3");
+        } else if (status === 'preparingResults') {
+          progress.set(4);
+        } else if (status === 'completed') {
+          clearInterval(interval);
+          progress.set(5); // Task complete
+          isLoading.set(false);
+        }
+      } catch (error) {
+        console.error('Polling error:', error);
+        clearInterval(interval);
+        isLoading.set(false);
+      }
+    }, 2000); // Poll every 2 seconds
+  }
 </script>
 
 

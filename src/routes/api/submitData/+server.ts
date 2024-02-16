@@ -3,12 +3,19 @@ import path from 'path';
 import { streamToString } from '$lib/server/stringConverter';
 import { runScraper } from '$lib/server/runScraper'
 import { exec } from 'child_process'
+import type { RequestHandler } from '@sveltejs/kit';
+import { v4 as uuidv4 } from 'uuid';
+import { tasks } from '$lib/server/taskStore';
+import { link } from 'fs';
+
 
 export async function POST({ request }: { request: Request }) {
   try {
     if (request.body !== null) {
       const convertedString = await streamToString(request.body);
-
+      const taskId = uuidv4();
+      tasks.set(taskId, { status: 'submitted' });
+      
       const formData = JSON.parse(convertedString) || {};
       console.log("form:" + formData);
       let test = JSON.stringify(formData, null, 2);
@@ -26,7 +33,7 @@ export async function POST({ request }: { request: Request }) {
 
       // Set path's
       const dataFolder = path.join(path.dirname(modulePath), '../../../json/files');
-      const pythonScriptPath = path.join(path.dirname(modulePath), '../../../scripts/main.py');
+      const pythonScraping = path.join(path.dirname(modulePath), '../../../scripts/main.py');
 
       clearDirectory(dataFolder);
 
@@ -37,16 +44,24 @@ export async function POST({ request }: { request: Request }) {
 
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
 
-      runScraper(pythonScriptPath);
+      await processScraping(taskId, pythonScraping);
 
-      return new Response(JSON.stringify({ message: 'Data transmitted successfully' }), {
+      await processRating(taskId, pythonScraping);
+
+      return new Response(JSON.stringify({ taskId }), {
         status: 200,
         headers: {
           'Content-Type': 'application/json'
         }
       });
     }
-
+    else if (request.body == null) {
+      // If request.body is null, return an appropriate response
+      return new Response(JSON.stringify({ error: 'Request body is null' }), {
+        status: 400, // Bad Request
+        headers: { 'Content-Type': 'application/json' }
+    });
+    }
   } catch (error) {
     console.error(error);
     return {
@@ -59,6 +74,21 @@ export async function POST({ request }: { request: Request }) {
   }
 }
 
+async function processScraping(taskId : any, pythonScraping : string) {
+
+  await runScraper(pythonScraping);
+  // Update status
+  tasks.set(taskId, { status: 'scrapingCompleted' });
+  
+}
+
+async function processRating(taskId : any, pythonScraping : string) {
+
+  await runScraper(pythonScraping);
+  // Update status
+  tasks.set(taskId, { status: 'ratingCompleted' });
+  
+}
 
 async function clearDirectory(directory: string): Promise<void> {
   try {

@@ -1,6 +1,6 @@
 import { exec } from 'child_process'
 
-export function runScraper(pythonScriptPath: string) {
+export function runScraper(pythonScriptPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
         exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
             if (error) {
@@ -10,7 +10,7 @@ export function runScraper(pythonScriptPath: string) {
             }
             console.log(`stdout: ${stdout}`);
             if(stderr) console.error(`stderr: ${stderr}`);
-            resolve(stdout); // Resolve with the output
+            resolve();
         });
     });
 }
