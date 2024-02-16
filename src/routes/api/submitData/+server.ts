@@ -1,6 +1,7 @@
 import * as fs from 'fs/promises';
 import path from 'path';
 import { streamToString } from '$lib/server/stringConverter';
+import { runScraper } from '$lib/server/runScraper'
 import { exec } from 'child_process'
 
 export async function POST({ request }: { request: Request }) {
@@ -36,17 +37,7 @@ export async function POST({ request }: { request: Request }) {
 
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
 
-
-      exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          return;
-        }
-
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-      });
-
+      runScraper(pythonScriptPath);
 
       return new Response(JSON.stringify({ message: 'Data transmitted successfully' }), {
         status: 200,

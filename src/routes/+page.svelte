@@ -21,8 +21,15 @@
   import { Heading, P, A, Mark, Secondary } from 'flowbite-svelte';
   import { Popover} from 'flowbite-svelte';
   import { blur, fade, slide } from 'svelte/transition';
+  import { writable } from 'svelte/store';
 
+  // Indicator for the Loading Bar
+  let loadingProgress = writable(0); 
+  let isLoading = false;
+
+  // Function to Handle the URL Submit
   async function handleSubmit(event: Event) {
+  let isLoading = true;
   event.preventDefault();
   const form = document.querySelector('form');
 
