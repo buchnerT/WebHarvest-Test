@@ -56,7 +56,6 @@ export async function POST({ request }: { request: Request }) {
       });
     }
     else if (request.body == null) {
-      // If request.body is null, return an appropriate response
       return new Response(JSON.stringify({ error: 'Request body is null' }), {
         status: 400, // Bad Request
         headers: { 'Content-Type': 'application/json' }

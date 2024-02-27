@@ -1,13 +1,14 @@
 <header>
-  <div class="text-center">
-    <Heading customSize="" class="my-1 text-primary-400"  tag="h1" size="lg" >Web<span class="text-primary-300">Harvest</span></Heading>
-    <P class="text-center" weight="extralight" size="4xl">187187</P>
-  </div>
+ 
 </header>
 
-<body id="background" >
+<body class="">
+  <div class="text-center">
+    <Heading class="my-1 mt-6 text-primary-400 text-6xl"  tag="h1" >Web<span class="text-primary-300">Harvest</span></Heading>
+    <P class="text-center" weight="extralight" size="4xl">187187</P>
+  </div>
   <form method="POST" class="flex gap-2 mr-36 ml-36 mt-36" on:submit|preventDefault={handleSubmit}>
-    <Search name="link" id="link" type="text"></Search>
+    <Search name="link" size="lg" id="link" type="text"></Search>
     <Button type="submit" class="!p-2.5 bg-primary-400">
       <SearchOutline class="w-5 h-5" />
     </Button>
@@ -24,13 +25,13 @@
   import { writable } from 'svelte/store';
 
   let progress = writable(0); // Tracks the progress of the task
-  let isLoading = writable(false); // Tracks whether a task is in progress
+  let isLoading = false; // Tracks whether a task is in progress
   let taskId : any; // Will store the task ID returned from the backend
 
   // Function to handle the URL submit
   async function handleSubmit(event: Event) {
     event.preventDefault();
-    isLoading.set(true);
+    isLoading = false;
     progress.set(1); // Indicates form submission
 
     const form = document.querySelector('form');
@@ -57,7 +58,7 @@
         pollTaskStatus(); 
       } catch (error) {
         console.error('Fetch error:', error);
-        isLoading.set(false);
+        isLoading = false;
       }
     }
   }
@@ -83,20 +84,23 @@
         } else if (status === 'completed') {
           clearInterval(interval);
           progress.set(5); // Task complete
-          isLoading.set(false);
+          isLoading = false;
         }
       } catch (error) {
         console.error('Polling error:', error);
         clearInterval(interval);
-        isLoading.set(false);
+        isLoading = false;
       }
     }, 2000); // Poll every 2 seconds
   }
 </script>
 
+<div class="overlay" in:fade="{{ duration: 300 }}" class:active={isLoading} /> 
 
 <style>
-  #background {
-    background-color : #1A1A1D;
-  }
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; 
+}
 </style>
