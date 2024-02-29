@@ -2,12 +2,12 @@
  
 </header>
 
-<body class="">
+<body>
   <div class="text-center">
     <Heading class="my-1 mt-6 text-primary-400 text-6xl"  tag="h1" >Web<span class="text-primary-300">Harvest</span></Heading>
     <P class="text-center" weight="extralight" size="4xl">187187</P>
   </div>
-  <form method="POST" class="flex gap-2 mr-36 ml-36 mt-36" on:submit|preventDefault={handleSubmit}>
+  <form method="POST" class="flex gap-2 mr-36 ml-36 mt-36 z-10" on:submit|preventDefault={handleSubmit}>
     <Search name="link" size="lg" id="link" type="text"></Search>
     <Button type="submit" class="!p-2.5 bg-primary-400">
       <SearchOutline class="w-5 h-5" />
@@ -23,15 +23,17 @@
   import { Popover} from 'flowbite-svelte';
   import { blur, fade, slide } from 'svelte/transition';
   import { writable } from 'svelte/store';
+  import { isLoading } from '../lib/client-side/loadingStore';
 
   let progress = writable(0); // Tracks the progress of the task
-  let isLoading = false; // Tracks whether a task is in progress
   let taskId : any; // Will store the task ID returned from the backend
 
   // Function to handle the URL submit
   async function handleSubmit(event: Event) {
     event.preventDefault();
-    isLoading = false;
+    isLoading.set(true);
+    console.log(isLoading);
+    
     progress.set(1); // Indicates form submission
 
     const form = document.querySelector('form');
@@ -58,7 +60,7 @@
         pollTaskStatus(); 
       } catch (error) {
         console.error('Fetch error:', error);
-        isLoading = false;
+        isLoading.set(false);
       }
     }
   }
@@ -84,23 +86,23 @@
         } else if (status === 'completed') {
           clearInterval(interval);
           progress.set(5); // Task complete
-          isLoading = false;
+          isLoading.set(false);
         }
       } catch (error) {
         console.error('Polling error:', error);
         clearInterval(interval);
-        isLoading = false;
+        isLoading.set(false);
       }
     }, 2000); // Poll every 2 seconds
   }
 </script>
 
-<div class="overlay" in:fade="{{ duration: 300 }}" class:active={isLoading} /> 
 
 <style>
   body {
     margin: 0;
     padding: 0;
-    overflow: hidden; 
+    overflow: hidden;
+    z-index: 1;
 }
 </style>
