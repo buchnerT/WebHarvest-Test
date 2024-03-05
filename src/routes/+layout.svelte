@@ -6,7 +6,6 @@
     import { isLoading } from "../lib/client-side/loadingStore"
   </script>
 
-  <body>
     <div class="spacer layer">
       <slot></slot>
     </div>
@@ -20,31 +19,11 @@
           <FooterLink href="/">Contact</FooterLink>
         </FooterLinkGroup>
       </Footer>
-      <div class="overlay" in:fade="{{ duration: 300 }}" class:active={$isLoading} />
-  </body>
-  
-    <style>
-
-      .overlay {
-        position: relative;
-        top: 0;
-        left: 0;
-        width: 100%; 
-        height: 100%; 
-        background-color: #1a1a1d;
-        opacity: 0; 
-        z-index: 0; 
-        transition: opacity 0.5s ease-in-out; 
-      }
-
-      .overlay.active {
-        opacity: 1;
-        z-index: 9999; 
-      }
+    <style>      
 
       .spacer {
          width: 100%;     
-         background-size: cover; 
+         background-size: cover;
       }
      
       .layer {

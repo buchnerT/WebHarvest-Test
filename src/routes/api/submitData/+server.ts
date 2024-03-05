@@ -33,7 +33,7 @@ export async function POST({ request }: { request: Request }) {
 
       // Set path's
       const dataFolder = path.join(path.dirname(modulePath), '../../../json/files');
-      const pythonScraping = path.join(path.dirname(modulePath), '../../../scripts/main.py');
+      const pythonScraping = path.join(path.dirname(modulePath), '../../../lib/scripts/main.py');
 
       clearDirectory(dataFolder);
 
