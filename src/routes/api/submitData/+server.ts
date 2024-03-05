@@ -1,7 +1,7 @@
 import * as fs from 'fs/promises';
 import path from 'path';
 import { streamToString } from '$lib/server/stringConverter';
-import { runScraper } from '$lib/server/runScraper'
+import { runPython } from '$lib/server/runPython';
 import { exec } from 'child_process'
 import type { RequestHandler } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,7 +33,8 @@ export async function POST({ request }: { request: Request }) {
 
       // Set path's
       const dataFolder = path.join(path.dirname(modulePath), '../../../json/files');
-      const pythonScraping = path.join(path.dirname(modulePath), '../../../lib/scripts/main.py');
+      const pythonScrapingPath = path.join(path.dirname(modulePath), '../../../lib/scripts/main.py');
+      const pythonBertPath = path.join(path.dirname(modulePath), '../../../lib/scripts/predict.py');
 
       clearDirectory(dataFolder);
 
@@ -44,9 +45,9 @@ export async function POST({ request }: { request: Request }) {
 
       await fs.writeFile(filePath, JSON.stringify(formData, null, 2));
 
-      await processScraping(taskId, pythonScraping);
+      await processScraping(taskId, pythonScrapingPath);
 
-      await processRating(taskId, pythonScraping);
+      await processRating(taskId, pythonBertPath);
 
       return new Response(JSON.stringify({ taskId }), {
         status: 200,
@@ -73,21 +74,22 @@ export async function POST({ request }: { request: Request }) {
   }
 }
 
-async function processScraping(taskId : any, pythonScraping : string) {
+async function processScraping(taskId : any, path : string) {
 
-  await runScraper(pythonScraping);
+  await runPython(path);
   // Update status
   tasks.set(taskId, { status: 'scrapingCompleted' });
   
 }
 
-async function processRating(taskId : any, pythonScraping : string) {
+async function processRating(taskId : any, path : string) {
 
-  await runScraper(pythonScraping);
+  await runPython(path);
   // Update status
   tasks.set(taskId, { status: 'ratingCompleted' });
   
 }
+
 
 async function clearDirectory(directory: string): Promise<void> {
   try {

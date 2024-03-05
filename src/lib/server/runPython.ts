@@ -1,6 +1,6 @@
 import { exec } from 'child_process'
 
-export function runScraper(pythonScriptPath: string): Promise<void> {
+export function runPython(pythonScriptPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
         exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
             if (error) {

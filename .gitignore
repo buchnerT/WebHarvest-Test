@@ -8,3 +8,6 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+src/lib/scripts/savemodel/saved_model.pb
+src/lib/scripts/savemodel/variables/variables.data-00000-of-00001
+src/lib/scripts/savemodel/variables/variables.index
