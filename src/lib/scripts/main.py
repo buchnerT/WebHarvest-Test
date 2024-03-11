@@ -22,6 +22,7 @@ def run_spider_trust(link):
     process.start()
 
 def read_file():
+    print(os.getcwd())
     directory = ".\\src\\json\\files\\"
 
     # Iterate over each file in the directory

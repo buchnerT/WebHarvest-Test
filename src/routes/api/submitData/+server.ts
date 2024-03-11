@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { tasks } from '$lib/server/taskStore';
 import { link } from 'fs';
 
-
 export async function POST({ request }: { request: Request }) {
+  console.log("Current Working Directory:", process.cwd());
   try {
     if (request.body !== null) {
       const convertedString = await streamToString(request.body);

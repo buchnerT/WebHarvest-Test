@@ -5,7 +5,7 @@ import os
 
 
 def load_model():
-    model_path =  r'C:\Users\Tobias Buchner\Documents\HTL\Diplomarbeit\WebHarvest-Test\src\lib\scripts\savemodel'
+    model_path = 'C:\\Users\\Tobias Buchner\\Documents\\HTL\\Diplomarbeit\\WebHarvest-Test\\src\\lib\\scripts\\savemodel'
     try:
         loaded_model = tf.saved_model.load(model_path)
         # ... rest of your code
@@ -92,6 +92,6 @@ def auswertung():
 if __name__ == "__main__":
     # This code block will only execute if bertaus.py is the entry point to the program,
     # not when it is imported as a module.
-    print("os.getcwd()")
+    print(os.getcwd())
     x = auswertung()
     print(f"Fake: {x['Fake']} Real: {x['Real']}")
